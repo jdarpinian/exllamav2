@@ -17,8 +17,16 @@ if ext_debug:
 
 extra_compile_args = {
     "cxx": extra_cflags,
-    "nvcc": ["-lineinfo", "-O3"],
+    "nvcc": ["-lineinfo", "-O3" ],
 }
+
+# Build for every supported architecture since 10-series (Pascal)
+for arch in ["60", "61", "62", "70", "72", "75", "80", "86", "87", "89", "90", "90a"]:
+    extra_compile_args["nvcc"].extend(["-gencode", f"arch=compute_{arch},code=sm_{arch}"])
+
+# Build latest available PTX version, will run on any future GPU
+extra_compile_args["nvcc"].extend(["-gencode", f"arch=compute_90,code=compute_90"])
+
 
 setup_kwargs = {
     "ext_modules": [
